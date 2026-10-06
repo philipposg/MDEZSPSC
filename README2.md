@@ -13,7 +13,7 @@ empty, ...) without any image of them.
 
 ```bash
 pip install -r requirements.txt     # PyTorch >= 1.13 and torchvision; no graph libraries needed
-bash scripts/download_data.sh       # knowledge graph + ImageNet class nodes into data/
+bash scripts/download_data.sh       # graph, ImageNet class nodes and test sets into data/
 ```
 
 `data/graph_ilsvrc.pt` holds the ConceptNet graph around the ImageNet classes and the
@@ -21,19 +21,18 @@ state words: 574,270 nodes, 50 relation types, 2.34M edges with random-walk weig
 and 300-d GloVe node features. It was created from the ZSL-KG graph with
 `scripts/export_graph.py`.
 
-Each test set is an HDF5 file `data/test/<test set>.h5` with one dataset per state,
-`images/<state>`: `(N, 3, 224, 224)` float32 images, resized to 224x224 and normalized with
-the ImageNet mean and std (an image folder `<dir>/<state>/*.jpg` works too). Test sets:
+The data files are on Zenodo ([10.5281/zenodo.23187515](https://doi.org/10.5281/zenodo.23187515)).
+Each test set is an image folder `data/test/<test set>/<state>/*.jpg` (images are resized to
+224x224 and normalized with the ImageNet mean and std in `evaluate.py`; an HDF5 file with one
+dataset per state, `images/<state>`: `(N, 3, 224, 224)` float32, already normalized, works too).
+Test sets:
 
-| test set | source | states |
-|---|---|---|
-| osdd | OSDD (Gouidis et al., VISAPP 2022) | closed, containing, empty, filled, folded, open, plugged, unfolded, unplugged |
-| cgqa | C-GQA (Mancini et al., TPAMI 2022) | closed, empty, filled, folded, open |
-| mit | MIT-States (Isola et al., CVPR 2015) | closed, empty, filled, folded, open |
-| vaw_states | VAW (Pham et al., CVPR 2021) | the 9 OSDD states |
-
-TODO before release: download links of the HDF5 test splits (and `DATA_URL` in
-`scripts/download_data.sh`).
+| test set | source | images | states |
+|---|---|---|---|
+| osdd | OSDD (Gouidis et al., VISAPP 2022) | 3,109 | closed, containing, empty, filled, folded, open, plugged, unfolded, unplugged |
+| cgqa | C-GQA (Mancini et al., TPAMI 2022) | 497 | closed, empty, filled, folded, open |
+| mit | MIT-States (Isola et al., CVPR 2015) | 354 | closed, empty, filled, folded, open |
+| vaw_states | VAW (Pham et al., CVPR 2021) | 1,584 | the 9 OSDD states |
 
 ## Usage
 
@@ -45,7 +44,7 @@ python train.py --out runs/metapath_l3_c3
 python predict.py --run runs/metapath_l3_c3
 
 # 3. zero-shot state classification: mean per-class top-1 accuracy
-python evaluate.py --pred runs/metapath_l3_c3/states.pred --test_set osdd --test data/test/osdd.h5
+python evaluate.py --pred runs/metapath_l3_c3/states.pred --test_set osdd --test data/test/osdd
 ```
 
 Default configuration: metapath length 3 (`--num_layers`), 3 channels (`--num_channels`),
