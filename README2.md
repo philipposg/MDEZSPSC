@@ -12,6 +12,8 @@ empty, ...) without any image of them.
 ## Setup
 
 ```bash
+# first install the PyTorch build matching your CUDA driver (https://pytorch.org/get-started/locally/),
+# e.g. pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
 pip install -r requirements.txt     # PyTorch >= 1.13 and torchvision; no graph libraries needed
 bash scripts/download_data.sh       # graph, ImageNet class nodes and test sets into data/
 ```
